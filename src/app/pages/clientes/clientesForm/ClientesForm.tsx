@@ -20,10 +20,10 @@ const ClientesForm = ({ item, handleClose, handleFormSubmit }: ClientesFormProps
     cpfCnpj: item?.cpfCnpj ?? "",
     status: item?.status ?? EnumStatusCliente.Ativo,
     nome: item?.nome ?? "",
-    identidade: item?.identidade ?? null,
-    orgaoExpedidor: item?.orgaoExpedidor ?? null,
-    dataNascimento: item?.dataNascimento ? new Date(item.dataNascimento).toISOString().split("T")[0] : "",
-    nomeFantasia: item?.nomeFantasia ?? null,
+    identidade: item?.identidade ?? "",
+    dataNascimento: formatDateForInput(item?.dataNascimento),
+    orgaoExpedidor: item?.orgaoExpedidor ?? "",
+    nomeFantasia: item?.nomeFantasia ?? "",
     contato: item?.contato ?? "",
   });
 
@@ -37,7 +37,7 @@ const ClientesForm = ({ item, handleClose, handleFormSubmit }: ClientesFormProps
         nome: item.nome,
         identidade: item.identidade ?? "",
         orgaoExpedidor: item.orgaoExpedidor ?? "",
-        dataNascimento: item.dataNascimento ? new Date(item.dataNascimento).toISOString().split("T")[0] : "",
+        dataNascimento: formatDateForInput(item?.dataNascimento),
         nomeFantasia: item.nomeFantasia ?? "",
         contato: item.contato,
       });
@@ -59,11 +59,8 @@ const ClientesForm = ({ item, handleClose, handleFormSubmit }: ClientesFormProps
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const contatoLimpo = contatoOuTelefone ? formValues.contato.replace(/\D/g, "") : formValues.contato;
-    const formDataParaEnviar = { ...formValues, contato: contatoLimpo, dataNascimento: formValues.dataNascimento ? new Date(formValues.dataNascimento) : null };
-
-    await handleFormSubmit(formDataParaEnviar, item?._id);
+    const payload = { ...formValues, contato: contatoOuTelefone ? formValues.contato.replace(/\D/g, "") : formValues.contato };
+    await handleFormSubmit(payload, item?._id);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +69,7 @@ const ClientesForm = ({ item, handleClose, handleFormSubmit }: ClientesFormProps
 
     setFormValues((prev) => ({
       ...prev,
-      [name]: novoValor,
+      [name]: novoValor
     }));
   };
 
@@ -99,6 +96,12 @@ const ClientesForm = ({ item, handleClose, handleFormSubmit }: ClientesFormProps
 
     return value;
   };
+
+  function formatDateForInput(date?: string | Date): string {
+    if (!date) return "";
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+    return dateObj.toISOString().split("T")[0];
+  }
 
   return (
     <div>

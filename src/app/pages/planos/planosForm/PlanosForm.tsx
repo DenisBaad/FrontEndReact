@@ -44,6 +44,7 @@ const PlanosForm = ({ item, handleClose, handleFormSubmit }: PlanosFormProps) =>
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    
     setFormValues((prev) => ({
       ...prev,
       [name]: name === "descricao" ? value : Number(value),

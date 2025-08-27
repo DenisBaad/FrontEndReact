@@ -9,7 +9,7 @@ export interface RequestCliente {
   nome: string;
   identidade?: string | null;
   orgaoExpedidor?: string | null;
-  dataNascimento: Date | null;
+  dataNascimento: Date | string;
   nomeFantasia?: string | null;
   contato: string;
 }

@@ -8,6 +8,7 @@ import usuariosService from "../../services/UsuarioService";
 import loginService from "../../services/LoginService";
 import Cookies from "js-cookie";
 import MySnackbar from "../../shared/utils/SnackBar";
+import type { AxiosError } from 'axios';
 
 const LoginHome = () => {
   const navigate = useNavigate();
@@ -67,9 +68,23 @@ const LoginHome = () => {
 
         navigate("/clientes");
       }
-    } catch {
-      setSnackbarMessage(isCadastroMode ? "Não foi possível cadastrar o usuário." : "Credenciais inválidas!");
-    } 
+    } catch (error: unknown) {
+      console.error(error);
+      const message = getErrorMessage(error as AxiosError<{ errors?: string[] | string }>);
+      setSnackbarMessage(message);
+    }
+  };
+
+  const getErrorMessage = (err: AxiosError<{ errors?: string[] | string }>): string => {
+    const data = err.response?.data;
+
+    if (data?.errors && Array.isArray(data.errors)) {
+      const lista = data.errors.map((el: string) => `• ${el}`).join("\n");
+      return "Erros encontrados:\n" + lista;
+    } else if (data?.errors) {
+      return String(data.errors); 
+    }
+    return "Erro desconhecido. Detalhes indisponíveis.";
   };
 
   return (

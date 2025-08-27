@@ -30,9 +30,10 @@ const RelatorioFaturas = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    
     setFormValues((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value
     }));
   };
 
@@ -56,9 +57,7 @@ const RelatorioFaturas = () => {
     const usuarioNome = decodeURIComponent(getCookie("USUARIO_NOME") || "Usuário Desconhecido");
 
     try {
-      const inicio = new Date(`${dataAbertura}T00:00:00Z`); 
-      const fim = new Date(`${dataFechamento}T23:59:59.999Z`); 
-      const fileUrl = await FaturasService.getRelatorioFaturas(usuarioNome, inicio, fim, status || null, clientesSelecionados);
+      const fileUrl = await FaturasService.getRelatorioFaturas(usuarioNome, dataAbertura, dataFechamento, status || null, clientesSelecionados);
       
       setPdfUrl(fileUrl);
       setLoading(false);

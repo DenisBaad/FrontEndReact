@@ -19,9 +19,9 @@ interface FaturasFormProps {
 const FaturasForm = ({ item, planos, clientes, handleClose, handleFormSubmit }: FaturasFormProps) => {
   const [formValues, setFormValues] = useState({
     status: item?.status ?? EnumStatusFatura.Aberto,
-    inicioVigencia: item?.inicioVigencia ? new Date(item.inicioVigencia).toISOString().split("T")[0] : "",
-    fimVigencia: item?.fimVigencia ? new Date(item.fimVigencia).toISOString().split("T")[0] : "",
-    dataVencimento: item?.dataVencimento ? new Date(item.dataVencimento).toISOString().split("T")[0] : "",
+    inicioVigencia: formatDateForInput(item?.inicioVigencia),
+    fimVigencia: formatDateForInput(item?.fimVigencia),
+    dataVencimento: formatDateForInput(item?.dataVencimento),
     valorTotal: item?.valorTotal ?? 0,
     planoId: item?.planoId ?? "",
     clienteId: item?.clienteId ?? ""
@@ -31,9 +31,9 @@ const FaturasForm = ({ item, planos, clientes, handleClose, handleFormSubmit }: 
     if (item) {
       setFormValues({
         status: item.status,
-        inicioVigencia: item.inicioVigencia ? new Date(item.inicioVigencia).toISOString().split("T")[0] : "",
-        fimVigencia: item.fimVigencia ? new Date(item.fimVigencia).toISOString().split("T")[0] : "",
-        dataVencimento: item.dataVencimento ? new Date(item.dataVencimento).toISOString().split("T")[0] : "",
+        inicioVigencia: formatDateForInput(item.inicioVigencia),
+        fimVigencia: formatDateForInput(item.fimVigencia),
+        dataVencimento: formatDateForInput(item.dataVencimento),
         valorTotal: item.valorTotal,
         planoId: item.planoId,
         clienteId: item.clienteId,
@@ -53,18 +53,13 @@ const FaturasForm = ({ item, planos, clientes, handleClose, handleFormSubmit }: 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const payload: Omit<RequestFatura, "_id"> = {
-    ...formValues,
-    inicioVigencia: formValues.inicioVigencia ? new Date(formValues.inicioVigencia) : null,
-    fimVigencia: formValues.fimVigencia ? new Date(formValues.fimVigencia) : null,
-    dataVencimento: formValues.dataVencimento ? new Date(formValues.dataVencimento) : null,
-  };
-
+    const payload: Omit<RequestFatura, "_id"> = { ...formValues };
     await handleFormSubmit(payload, item?._id);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    
     setFormValues((prev) => ({
       ...prev,
       [name]: name === "valorTotal" ? Number(value) : value,
@@ -73,8 +68,17 @@ const FaturasForm = ({ item, planos, clientes, handleClose, handleFormSubmit }: 
 
   const { inputValue: valorTotalInput, handleInputChange: handleValorTotalChange } = useCurrencyInput(
     formValues.valorTotal,
-    (val) => setFormValues((prev) => ({ ...prev, valorTotal: val ?? 0 }))
+    (val) => setFormValues((prev) => ({ 
+      ...prev,
+       valorTotal: val ?? 0 
+    }))
   );
+
+  function formatDateForInput(date?: string | Date): string {
+    if (!date) return "";
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+    return dateObj.toISOString().split("T")[0];
+  }
 
   return (
     <div>
