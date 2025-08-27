@@ -41,8 +41,8 @@ const FaturasTable = ({ faturas, planos, clientes, loading, openFormEvent }: Fat
     return tipos[tipo];
   };
 
-  const getClienteNome = (id: string) => clientes.find(c => c._id === id)?.nome ?? id;
-  const getPlanoDescricao = (id: string) => planos.find(p => p._id === id)?.descricao ?? id;
+  const getClienteNome = (id: string) => clientes.find(c => c._id === id)?.nome ?? "";
+  const getPlanoDescricao = (id: string) => planos.find(p => p._id === id)?.descricao ?? "";
   
   const filteredData = faturas.filter((fatura) =>
     getClienteNome(fatura.clienteId).toLowerCase().includes(searchTerm.toLowerCase())

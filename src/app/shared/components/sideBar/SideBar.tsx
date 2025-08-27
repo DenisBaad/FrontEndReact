@@ -27,6 +27,14 @@ export default function Sidebar() {
     setMenuTitle(title);
   }, [location.pathname]);
 
+  useEffect(() => {
+    if (isSmallScreen) {
+      setSidenavOpen(false); 
+    } else {
+      setSidenavOpen(true); 
+    }
+  }, [isSmallScreen]);
+
   if (isLoginRoute) {
     return (
       <Box >
@@ -48,7 +56,7 @@ export default function Sidebar() {
 
   return (
     <div className="sidebar-layout">
-      <Drawer variant={isSmallScreen ? "temporary" : "persistent"} open={sidenavOpen} className="drawer">
+      <Drawer variant={isSmallScreen ? "temporary" : "persistent"} open={sidenavOpen} onClose={() => setSidenavOpen(false)} className="drawer">
         
         <div className="avatar-container">
           <ImageControl width={163} height={163} imageUrl={imageUrl || undefined} isRounded={isRounded} onImageReady={handleImageReady} />
@@ -76,7 +84,7 @@ export default function Sidebar() {
         </List>
       </Drawer>
 
-      <IconButton onClick={() => setSidenavOpen(!sidenavOpen)} sx={{position: "fixed", top: 70, left: sidenavOpen ? 320 : 10, width: 27, height: 27, backgroundColor: "gray", color: "white", "&:hover": { backgroundColor: "gray" }}}>
+      <IconButton onClick={() => setSidenavOpen(!sidenavOpen)} sx={{ position: "fixed", top: 70, left: isSmallScreen ? 10 : sidenavOpen ? 320 : 10,  width: 27, height: 27, backgroundColor: "gray", color: "white", zIndex: 1301, "&:hover": { backgroundColor: "gray" } }}>
         <MenuIcon sx={{ fontSize: 20 }} />
       </IconButton>
       

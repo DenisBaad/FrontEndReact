@@ -41,16 +41,22 @@ const CropperDialog = ({ image, width, height, onSave, onCancel }: CropperDialog
   };
 
   return (
-    <div className="cropper-dialog">
-      <h1>Por favor ajuste sua foto</h1>
-      
-      <div className="cropper-container">
-        {imageSrc && (<Cropper image={imageSrc} crop={crop} zoom={zoom} aspect={width / height} onCropChange={setCrop} onZoomChange={setZoom} onCropComplete={handleCropComplete} />)}
-      </div>
-      
-      <div className="cropper-actions">
-        <button className="btn btn-cancel" onClick={onCancel}>Cancelar</button>
-        <button className="btn btn-save" onClick={handleSave}>Salvar</button>
+    <div className="cropper-overlay">
+      <div className="cropper-dialog">
+        <h1>Por favor ajuste sua foto</h1>
+
+        <div className="cropper-container">
+          {imageSrc && (<Cropper image={imageSrc} crop={crop} zoom={zoom} aspect={width / height} onCropChange={setCrop} onZoomChange={setZoom} onCropComplete={handleCropComplete} />)}
+        </div>
+
+        <div className="cropper-actions">
+          <button className="btn btn-cancel" onClick={onCancel}>
+            Cancelar
+          </button>
+          <button className="btn btn-save" onClick={handleSave}>
+            Salvar
+          </button>
+        </div>
       </div>
     </div>
   );
