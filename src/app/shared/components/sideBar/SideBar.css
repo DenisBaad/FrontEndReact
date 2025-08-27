@@ -1,0 +1,70 @@
+.drawer .MuiDrawer-paper {
+  width: 314px; 
+  margin-top: 64px;
+}
+
+.avatar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.menu-list a {
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  margin: 0px 20px; 
+  margin-bottom: 4px;
+  padding-top: 1px;
+}
+
+.menu-item.active,
+.menu-item:hover {
+  background: linear-gradient(
+    to top,
+    rgba(175, 221, 243, 0.445),
+    rgba(0, 248, 186, 0.26)
+  );
+}
+
+.theme-dark .menu-item.active,
+.theme-dark .menu-item:hover {
+  background-color: #02e9ce18;
+}
+
+.theme-dark .drawer .MuiDrawer-paper {
+  background-color: #414040; 
+  color: #f0f0f0; 
+}
+
+.main-content.pushed {
+  margin-left: 300px; 
+}
+
+.routes-container {
+  flex-grow: 1;
+  padding: 16px;
+}
+
+.header-main {
+  background-color: #2196f3; 
+  color: white;
+}
+
+body.theme-dark .header-main {
+  background-color: #02e9cea1; 
+  color: black;
+}
+
+.menu-list i {
+  color: black; 
+}
+
+body.theme-dark .menu-list i {
+  color: white;
+}
+
+.menu-list .MuiListItemText-primary {
+  font-size: 1.1rem; 
+}

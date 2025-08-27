@@ -1,0 +1,39 @@
+.table-container {
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0px 3px 6px rgba(0,0,0,0.16);
+  border: 1px solid white;
+}
+
+.table-container th {
+  background: linear-gradient(to top, rgba(175, 221, 243, 0.445), rgba(0, 248, 186, 0.26));
+  white-space: nowrap;
+  text-align: center;
+}
+
+.table-container th:first-child {
+  border-top-left-radius: 5px;
+}
+
+.table-container th:last-child {
+  border-top-right-radius: 5px;
+}
+
+.table-container td {
+  white-space: nowrap;
+  text-align: center;
+  padding: 14px;
+  font-size: 1rem;
+}
+
+.text-field-search {
+  background-color: white;
+}
+
+body.theme-dark {
+  .text-field-search {
+    background-color: #414040;
+    color: white;
+  }
+}
+

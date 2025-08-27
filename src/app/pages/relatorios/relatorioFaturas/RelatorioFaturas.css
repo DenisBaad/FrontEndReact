@@ -1,0 +1,36 @@
+.container {
+  margin: 20px;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-control {
+  min-width: 200px;
+  flex: 1;
+}
+
+.form-control-large {
+  min-width: 300px;
+  flex: 2;
+}
+
+.date-field {
+  min-width: 180px;
+}
+
+.button-submit {
+  align-self: flex-end;
+}
+
+.iframe-container {
+  margin-top: 20px;
+}
+
+.loading-spinner {
+  margin-top: 20px;
+}
