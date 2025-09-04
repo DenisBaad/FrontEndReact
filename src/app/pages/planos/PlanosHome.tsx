@@ -65,21 +65,14 @@ const PlanosHome = () => {
       setOpenDialog(false); 
     } catch (error: unknown) {
       console.error(error);
-      const message = getErrorMessage(error as AxiosError<{ errors?: string[] | string }>);
+      const message = getErrorMessage(error as AxiosError<{ errors?: string[] }>);
       setSnackbar(message);
     }
   };
 
-  const getErrorMessage = (err: AxiosError<{ errors?: string[] | string }>): string => {
-    const data = err.response?.data;
-
-    if (data?.errors && Array.isArray(data.errors)) {
-      const lista = data.errors.map((el: string) => `• ${el}`).join("\n");
-      return "Erros encontrados:\n" + lista;
-    } else if (data?.errors) {
-      return String(data.errors); 
-    }
-    return "Erro desconhecido. Detalhes indisponíveis.";
+  const getErrorMessage = (err: AxiosError<{ errors?: string[] }>): string => {
+    const lista = err.response?.data?.errors?.map(el => `• ${el}`).join('\n');
+    return lista ? `Erros encontrados:\n${lista}` : 'Erro desconhecido. Detalhes indisponíveis.';
   };
 
   return(
