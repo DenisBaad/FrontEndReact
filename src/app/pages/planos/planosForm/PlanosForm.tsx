@@ -1,12 +1,12 @@
 import "./PlanosForm.css"
 import React, { useState } from "react";
 import { Button, TextField } from "@mui/material";
-import type { ResponsePlano } from "../../../shared/models/interfaces/responses/planos/ResponsePlano";
+import type { ItemPlano } from "../../../shared/models/interfaces/responses/planos/ResponsePlano";
 import { useCurrencyInput } from "../../../shared/utils/UseCurrencyInput";
 import type { RequestPlano } from "../../../shared/models/interfaces/requests/planos/RequestPlano";
 
 interface PlanosFormProps {
-  item: ResponsePlano | null;
+  item: ItemPlano | null;
   handleClose: () => void;
   handleFormSubmit: (formData: Omit<RequestPlano, "_id">, id?: string) => void;
 }

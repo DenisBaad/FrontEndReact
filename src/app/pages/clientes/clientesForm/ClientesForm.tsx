@@ -1,13 +1,13 @@
 import "./ClientesForm.css"
 import { useState } from "react";
-import type { ResponseCliente } from "../../../shared/models/interfaces/responses/clientes/ResponseCliente";
+import type { ItemCliente } from "../../../shared/models/interfaces/responses/clientes/ResponseCliente";
 import { Button, MenuItem, TextField } from "@mui/material";
 import { EnumTipoCliente } from "../../../shared/models/enums/EnumTipoCliente";
 import { EnumStatusCliente } from "../../../shared/models/enums/EnumStatusCliente";
 import type { RequestCliente } from "../../../shared/models/interfaces/requests/clientes/RequestCliente";
 
 interface ClientesFormProps {
-  item: ResponseCliente | null;
+  item: ItemCliente | null;
   handleClose: () => void;
   handleFormSubmit: (formData: Omit<RequestCliente, "_id">, id?: string) => void;
 }

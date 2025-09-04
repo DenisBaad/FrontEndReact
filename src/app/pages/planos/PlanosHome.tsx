@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { ResponsePlano } from "../../shared/models/interfaces/responses/planos/ResponsePlano";
+import type { ItemPlano } from "../../shared/models/interfaces/responses/planos/ResponsePlano";
 import PlanosTable from "./planosTable/PlanosTable";
 import PlanosService from "../../services/PlanosService";
 import MySnackbar from "../../shared/utils/SnackBar";
@@ -9,24 +9,44 @@ import type { AxiosError } from "axios";
 import type { RequestPlano } from "../../shared/models/interfaces/requests/planos/RequestPlano";
 
 const PlanosHome = () => {
-  const [planos, setPlanos] = useState<ResponsePlano[]>([]);
+  const [planos, setPlanos] = useState<ItemPlano[]>([]);
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState<string>("");
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedPlano, setSelectedPlano] = useState<ResponsePlano | null>(null);
+  const [selectedPlano, setSelectedPlano] = useState<ItemPlano | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
+  const [pageNumber, setPageNumber] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
     getPlanos();
-  }, [])
+  }, [pageNumber, pageSize, searchValue]);
 
   const getPlanos = async () => {
-    setLoading(true)
-    const data = await PlanosService.get();
-    setPlanos(data);
-    setLoading(false)
+    try {
+      setLoading(true)
+      const data = await PlanosService.get(pageNumber + 1, pageSize, searchValue);
+      setPlanos(data.items);
+      setTotalCount(data.totalCount);
+      setLoading(false)
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
   }
 
-  const handlePlanoEvent = (plano?: ResponsePlano) => {
+  const onSearch = (value: string) => {
+    setSearchValue(value);
+    setPageNumber(0);
+  };
+
+  const onPageChange = (newPage: number, newRowsPerPage: number) => {
+    setPageNumber(newPage);
+    setPageSize(newRowsPerPage);
+  };
+
+  const handlePlanoEvent = (plano?: ItemPlano) => {
     setSelectedPlano(plano ?? null);
     setOpenDialog(true);
   };
@@ -64,7 +84,16 @@ const PlanosHome = () => {
 
   return(
       <div className="margem">
-        <PlanosTable planos={planos} loading={loading} openFormEvent={handlePlanoEvent} />
+        <PlanosTable
+        planos={planos}
+        loading={loading}
+        totalCount={totalCount}
+        pageNumber={pageNumber}
+        pageSize={pageSize}
+        onPageChange={onPageChange}
+        onSearchChange={onSearch}
+        openFormEvent={handlePlanoEvent}
+        />
         
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth maxWidth="lg">
           <DialogContent>

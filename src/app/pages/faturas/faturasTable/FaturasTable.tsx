@@ -14,23 +14,25 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import Paginator from "../../../shared/utils/Paginator";
 import SearchIcon from '@mui/icons-material/Search';
-import type { ResponseFatura } from "../../../shared/models/interfaces/responses/faturas/ResponseFatura";
+import type { ItemFatura } from "../../../shared/models/interfaces/responses/faturas/ResponseFatura";
 import { EnumStatusFatura } from "../../../shared/models/enums/EnumStatusFatura";
-import type { ResponsePlano } from "../../../shared/models/interfaces/responses/planos/ResponsePlano";
-import type { ResponseCliente } from "../../../shared/models/interfaces/responses/clientes/ResponseCliente";
+import type { ItemPlano } from "../../../shared/models/interfaces/responses/planos/ResponsePlano";
+import type { ItemCliente } from "../../../shared/models/interfaces/responses/clientes/ResponseCliente";
 
 interface FaturasTableProps {
-  faturas: ResponseFatura[];
-  planos: ResponsePlano[];
-  clientes: ResponseCliente[];
+  faturas: ItemFatura[];
+  planos: ItemPlano[];
+  clientes: ItemCliente[];
   loading: boolean;
-  openFormEvent: (fatura?: ResponseFatura) => void;
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  onPageChange: (pageNumber: number, pageSize: number) => void;
+  openFormEvent: (fatura?: ItemFatura) => void;
 }
 
-const FaturasTable = ({ faturas, planos, clientes, loading, openFormEvent }: FaturasTableProps) => {
+const FaturasTable = ({ faturas, planos, clientes, loading, totalCount, pageNumber, pageSize, onPageChange, openFormEvent }: FaturasTableProps) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const tipoFatura = (tipo: EnumStatusFatura) => {
     const tipos = {
@@ -43,16 +45,11 @@ const FaturasTable = ({ faturas, planos, clientes, loading, openFormEvent }: Fat
 
   const getClienteNome = (id: string) => clientes.find(c => c._id === id)?.nome ?? "";
   const getPlanoDescricao = (id: string) => planos.find(p => p._id === id)?.descricao ?? "";
-  
-  const filteredData = faturas.filter((fatura) =>
+
+  const displayedData = faturas.filter((fatura) =>
     getClienteNome(fatura.clienteId).toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const paginatedData = filteredData.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
-
+  
   return (
     <div>
       <TextField
@@ -100,7 +97,7 @@ const FaturasTable = ({ faturas, planos, clientes, loading, openFormEvent }: Fat
                   </TableCell>
                 </TableRow>
               ) : (
-                paginatedData.map((fatura) => (
+                displayedData.map((fatura) => (
                   <TableRow key={fatura._id}>
                     <TableCell>{tipoFatura(fatura.status)}</TableCell>
                     <TableCell>{getClienteNome(fatura.clienteId)}</TableCell>
@@ -125,14 +122,11 @@ const FaturasTable = ({ faturas, planos, clientes, loading, openFormEvent }: Fat
 
       <div style={{ display: "flex", justifyContent: "center" }}>
         <Paginator
-          count={filteredData.length}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          onPageChange={setPage}
-          onRowsPerPageChange={(rows) => {
-            setRowsPerPage(rows);
-            setPage(0);
-          }}
+          count={totalCount}
+          page={pageNumber}
+          rowsPerPage={pageSize}
+          onPageChange={(newPage) => onPageChange(newPage, pageSize)}
+          onRowsPerPageChange={(newRows) => onPageChange(0, newRows)}
         />
       </div>
     </div>

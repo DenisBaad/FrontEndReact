@@ -2,6 +2,11 @@ import type { EnumStatusCliente } from "../../../enums/EnumStatusCliente";
 import type { EnumTipoCliente } from "../../../enums/EnumTipoCliente";
 
 export interface ResponseCliente {
+  items: ItemCliente[];
+  totalCount: number;
+}
+
+export interface ItemCliente {
   _id: string;
   codigo: number;
   tipo: EnumTipoCliente;

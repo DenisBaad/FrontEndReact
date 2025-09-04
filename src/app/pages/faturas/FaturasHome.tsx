@@ -1,50 +1,72 @@
 import { useEffect, useState } from "react";
 import MySnackbar from "../../shared/utils/SnackBar";
 import { Dialog, DialogContent } from "@mui/material";
-import type { ResponseFatura } from "../../shared/models/interfaces/responses/faturas/ResponseFatura";
+import type { ItemFatura } from "../../shared/models/interfaces/responses/faturas/ResponseFatura";
 import FaturasService from "../../services/FaturasService";
 import FaturasTable from "./faturasTable/FaturasTable";
 import FaturasForm from "./faturasForm/FaturasForm";
 import type { RequestFatura } from "../../shared/models/interfaces/requests/faturas/RequestFatura";
-import type { ResponseCliente } from "../../shared/models/interfaces/responses/clientes/ResponseCliente";
-import type { ResponsePlano } from "../../shared/models/interfaces/responses/planos/ResponsePlano";
+import type { ItemCliente } from "../../shared/models/interfaces/responses/clientes/ResponseCliente";
+import type { ItemPlano } from "../../shared/models/interfaces/responses/planos/ResponsePlano";
 import PlanosService from "../../services/PlanosService";
 import ClientesService from "../../services/ClientesService";
 import type { AxiosError } from "axios";
 
 const FaturasHome = () => {
-  const [faturas, setFaturas] = useState<ResponseFatura[]>([]);
-  const [planos, setPlanos] = useState<ResponsePlano[]>([]);
-  const [clientes, setClientes] = useState<ResponseCliente[]>([]);
+  const [faturas, setFaturas] = useState<ItemFatura[]>([]);
+  const [planos, setPlanos] = useState<ItemPlano[]>([]);
+  const [clientes, setClientes] = useState<ItemCliente[]>([]);
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState<string>("");
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedFatura, setSelectedFatura] = useState<ResponseFatura | null>(null);
+  const [selectedFatura, setSelectedFatura] = useState<ItemFatura | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
+  const [pageNumber, setPageNumber] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
     getPlanos();
     getClientes();
     getFaturas();
-  }, []);
+  }, [pageNumber, pageSize]);
 
   const getFaturas = async () => {
-    setLoading(true)
-    const data = await FaturasService.get();
-    setFaturas(data);
-    setLoading(false)
+    try {
+      setLoading(true)
+      const data = await FaturasService.get(pageNumber, pageSize);
+      setFaturas(data.items);
+      setTotalCount(data.totalCount);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
   }
 
   const getPlanos = async () => {
-    const data = await PlanosService.get();
-    setPlanos(data);
+    try {
+      const data = await PlanosService.get(1, 1000000, '');
+      setPlanos(data.items);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const getClientes = async () => {
-    const data = await ClientesService.get();
-    setClientes(data);
+    try {
+      const data = await ClientesService.get(1, 1000000, '');
+      setClientes(data.items);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const handleFaturaEvent = (fatura?: ResponseFatura) => {
+  const onPageChange = (newPage: number, newRowsPerPage: number) => {
+    setPageNumber(newPage);
+    setPageSize(newRowsPerPage);
+  };
+
+  const handleFaturaEvent = (fatura?: ItemFatura) => {
     setSelectedFatura(fatura ?? null);
     setOpenDialog(true);
   };
@@ -82,7 +104,17 @@ const FaturasHome = () => {
 
   return(
       <div className="margem">
-        <FaturasTable faturas={faturas} planos={planos} clientes={clientes} loading={loading} openFormEvent={handleFaturaEvent} />
+        <FaturasTable 
+        faturas={faturas} 
+        planos={planos} 
+        clientes={clientes} 
+        loading={loading} 
+        totalCount={totalCount}
+        pageNumber={pageNumber}
+        pageSize={pageSize}
+        onPageChange={onPageChange}
+        openFormEvent={handleFaturaEvent} 
+        />
         
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth maxWidth="lg">
           <DialogContent>

@@ -1,6 +1,5 @@
 import "./PlanosTable.css";
-import type { ResponsePlano } from "../../../shared/models/interfaces/responses/planos/ResponsePlano";
-import { useState } from "react";
+import type { ItemPlano } from "../../../shared/models/interfaces/responses/planos/ResponsePlano";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -15,35 +14,36 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import Paginator from "../../../shared/utils/Paginator";
 import SearchIcon from '@mui/icons-material/Search';
+import { useState } from "react";
 
 interface PlanosTableProps {
-  planos: ResponsePlano[];
+  planos: ItemPlano[];
   loading: boolean;
-  openFormEvent: (plano?: ResponsePlano) => void;
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  onPageChange: (pageNumber: number, pageSize: number) => void;
+  onSearchChange: (value: string) => void;
+  openFormEvent: (plano?: ItemPlano) => void;
 }
 
-const PlanosTable = ({ planos, loading, openFormEvent }: PlanosTableProps) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+const PlanosTable = ({ planos, loading, totalCount, pageNumber, pageSize, onPageChange, onSearchChange, openFormEvent }: PlanosTableProps) => {
+  const [searchValue, setSearchValue] = useState("");
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchValue(value);     
+    onSearchChange(value);      
+  }
   
-  const filteredData = planos.filter((plano) =>
-    plano.descricao.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const paginatedData = filteredData.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
-
   return (
     <div>
       <TextField
         label="Pesquisar planos"
         fullWidth
         variant="filled"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        value={searchValue}
+        onChange={handleSearchChange}
         className="text-field-search"
         sx={{ mb: 2, borderRadius: 3 }}
         InputProps={{
@@ -81,7 +81,7 @@ const PlanosTable = ({ planos, loading, openFormEvent }: PlanosTableProps) => {
                   </TableCell>
                 </TableRow>
               ) : (
-                paginatedData.map((plano) => (
+                planos.map((plano) => (
                   <TableRow key={plano._id}>
                     <TableCell>{plano.descricao}</TableCell>
                     <TableCell>{formatCurrency(plano.valorPlano)}</TableCell>
@@ -104,14 +104,11 @@ const PlanosTable = ({ planos, loading, openFormEvent }: PlanosTableProps) => {
 
       <div style={{ display: "flex", justifyContent: "center" }}>
         <Paginator
-          count={filteredData.length}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          onPageChange={setPage}
-          onRowsPerPageChange={(rows) => {
-            setRowsPerPage(rows);
-            setPage(0);
-          }}
+          count={totalCount}
+          page={pageNumber}
+          rowsPerPage={pageSize}
+          onPageChange={(newPage) => onPageChange(newPage, pageSize)}
+          onRowsPerPageChange={(newRows) => onPageChange(0, newRows)}
         />
       </div>
     </div>

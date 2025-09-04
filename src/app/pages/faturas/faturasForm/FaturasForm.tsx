@@ -2,16 +2,16 @@ import "./FaturasForm.css";
 import React, { useState } from "react";
 import { Button, TextField, MenuItem } from "@mui/material";
 import { useCurrencyInput } from "../../../shared/utils/UseCurrencyInput";
-import type { ResponseFatura } from "../../../shared/models/interfaces/responses/faturas/ResponseFatura";
+import type { ItemFatura } from "../../../shared/models/interfaces/responses/faturas/ResponseFatura";
 import { EnumStatusFatura } from "../../../shared/models/enums/EnumStatusFatura";
 import type { RequestFatura } from "../../../shared/models/interfaces/requests/faturas/RequestFatura";
-import type { ResponseCliente } from "../../../shared/models/interfaces/responses/clientes/ResponseCliente";
-import type { ResponsePlano } from "../../../shared/models/interfaces/responses/planos/ResponsePlano";
+import type { ItemCliente } from "../../../shared/models/interfaces/responses/clientes/ResponseCliente";
+import type { ItemPlano } from "../../../shared/models/interfaces/responses/planos/ResponsePlano";
 
 interface FaturasFormProps {
-  item: ResponseFatura | null;
-  planos: ResponsePlano[];
-  clientes: ResponseCliente[];
+  item: ItemFatura | null;
+  planos: ItemPlano[];
+  clientes: ItemCliente[];
   handleClose: () => void;
   handleFormSubmit: (formData: Omit<RequestFatura, "_id">, id?: string) => void;
 }

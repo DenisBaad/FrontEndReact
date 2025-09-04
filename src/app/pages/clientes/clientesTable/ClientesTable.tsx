@@ -1,6 +1,6 @@
 import "./ClientesTable.css";
 import { useState } from "react";
-import type { ResponseCliente } from "../../../shared/models/interfaces/responses/clientes/ResponseCliente";
+import type { ItemCliente } from "../../../shared/models/interfaces/responses/clientes/ResponseCliente";
 import { Button, CircularProgress, IconButton, InputAdornment, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
@@ -12,16 +12,25 @@ import BlockIcon from '@mui/icons-material/Block';
 import CheckIcon from '@mui/icons-material/Check';
 
 interface ClientesTableProps {
-  clientes: ResponseCliente[];
+  clientes: ItemCliente[];
   loading: boolean;
-  openFormEvent: (cliente?: ResponseCliente) => void;
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  onPageChange: (pageNumber: number, pageSize: number) => void;
+  onSearchChange: (value: string) => void;
+  openFormEvent: (cliente?: ItemCliente) => void;
   handleAtivarInativarEvent: (id: string) => void;
 }
 
-const ClientesTable = ({ clientes, loading, openFormEvent, handleAtivarInativarEvent }: ClientesTableProps) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+const ClientesTable = ({ clientes, loading, totalCount, pageNumber, pageSize, onPageChange, onSearchChange, openFormEvent, handleAtivarInativarEvent }: ClientesTableProps) => {
+  const [searchValue, setSearchValue] = useState("");
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchValue(value);     
+    onSearchChange(value);      
+  }
 
   const tipoCliente = (tipo: EnumTipoCliente) => {
     const tipos = {
@@ -38,15 +47,6 @@ const ClientesTable = ({ clientes, loading, openFormEvent, handleAtivarInativarE
     };
     return statuss[status] ?? "Outro";
   };
-  
-  const filteredData = clientes.filter((cliente) =>
-    cliente.nome.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const paginatedData = filteredData.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
 
   return (
     <div>
@@ -54,8 +54,8 @@ const ClientesTable = ({ clientes, loading, openFormEvent, handleAtivarInativarE
         label="Pesquisar clientes"
         fullWidth
         variant="filled"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        value={searchValue}
+        onChange={handleSearchChange}
         className="text-field-search"
         sx={{ mb: 2, borderRadius: 3 }}
         InputProps={{
@@ -95,7 +95,7 @@ const ClientesTable = ({ clientes, loading, openFormEvent, handleAtivarInativarE
                   </TableCell>
                 </TableRow>
               ) : (
-                paginatedData.map((cliente) => (
+                clientes.map((cliente) => (
                   <TableRow key={cliente._id}>
                     <TableCell>{cliente.codigo}</TableCell>
                     <TableCell>{cliente.nome}</TableCell>
@@ -126,14 +126,11 @@ const ClientesTable = ({ clientes, loading, openFormEvent, handleAtivarInativarE
 
       <div style={{ display: "flex", justifyContent: "center" }}>
         <Paginator
-          count={filteredData.length}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          onPageChange={setPage}
-          onRowsPerPageChange={(rows) => {
-            setRowsPerPage(rows);
-            setPage(0);
-          }}
+          count={totalCount}
+          page={pageNumber}
+          rowsPerPage={pageSize}
+          onPageChange={(newPage) => onPageChange(newPage, pageSize)}
+          onRowsPerPageChange={(newRows) => onPageChange(0, newRows)}
         />
       </div>
     </div>

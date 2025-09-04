@@ -13,8 +13,8 @@ const getHeaders = () => {
   };
 };
 
-const get = async (): Promise<ResponseCliente[]> => {
-  const { data } = await axios.get<ResponseCliente[]>(`${URL}/clientes`, { headers: getHeaders() });
+const get = async (pageNumber: number, pageSize: number, search: string = ""): Promise<ResponseCliente> => {
+  const { data } = await axios.get<ResponseCliente>(`${URL}/clientes?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${encodeURIComponent(search)}`, { headers: getHeaders() });
   return data;
 };
 

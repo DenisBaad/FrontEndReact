@@ -14,8 +14,8 @@ const getHeaders = () => {
   };
 };
 
-const get = async (): Promise<ResponseFatura[]> => {
-  const { data } = await axios.get<ResponseFatura[]>(`${URL}/faturas`, { headers: getHeaders() });
+const get = async (pageNumber: number, pageSize: number): Promise<ResponseFatura> => {
+  const { data } = await axios.get<ResponseFatura>(`${URL}/faturas?pageNumber=${pageNumber}&pageSize=${pageSize}`, { headers: getHeaders() });
   return data;
 };
 

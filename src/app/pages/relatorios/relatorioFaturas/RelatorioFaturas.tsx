@@ -3,11 +3,11 @@ import { Button, CircularProgress, MenuItem, Select, TextField } from "@mui/mate
 import { EnumStatusFatura } from "../../../shared/models/enums/EnumStatusFatura";
 import FaturasService from "../../../services/FaturasService";
 import { useEffect, useState } from "react";
-import type { ResponseCliente } from "../../../shared/models/interfaces/responses/clientes/ResponseCliente";
+import type { ItemCliente } from "../../../shared/models/interfaces/responses/clientes/ResponseCliente";
 import ClientesService from "../../../services/ClientesService";
 
 const RelatorioFaturas = () => {
-  const [clientes, setClientes] = useState<ResponseCliente[]>([]);
+  const [clientes, setClientes] = useState<ItemCliente[]>([]);
   const [loading, setLoading] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string>("");
   const [isMobile, setIsMobile] = useState(false);
@@ -24,8 +24,8 @@ const RelatorioFaturas = () => {
   }, []);
 
   const getClientes = async () => {
-    const data = await ClientesService.get();
-    setClientes(data);
+    const data = await ClientesService.get(1, 1000000, '');
+    setClientes(data.items);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

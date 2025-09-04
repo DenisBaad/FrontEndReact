@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { ResponseCliente } from "../../shared/models/interfaces/responses/clientes/ResponseCliente";
+import type { ItemCliente } from "../../shared/models/interfaces/responses/clientes/ResponseCliente";
 import ClientesService from "../../services/ClientesService";
 import { Dialog, DialogContent } from "@mui/material";
 import MySnackbar from "../../shared/utils/SnackBar";
@@ -9,24 +9,44 @@ import type { AxiosError } from "axios";
 import type { RequestCliente } from "../../shared/models/interfaces/requests/clientes/RequestCliente";
 
 const ClientesHome = () => {
-  const [clientes, setClientes] = useState<ResponseCliente[]>([]);
+  const [clientes, setClientes] = useState<ItemCliente[]>([]);
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState<string>("");
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedCliente, setSelectedCliente] = useState<ResponseCliente | null>(null);
+  const [selectedCliente, setSelectedCliente] = useState<ItemCliente | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
+  const [pageNumber, setPageNumber] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [searchValue, setSearchValue] = useState("");
     
   useEffect(() => {
     getClientes();
-  }, [])
+  }, [pageNumber, pageSize, searchValue])
     
   const getClientes = async () => {
-    setLoading(true)
-    const data = await ClientesService.get();
-    setClientes(data);
-    setLoading(false)
+    try {
+      setLoading(true)
+      const data = await ClientesService.get(pageNumber + 1, pageSize, searchValue);
+      setClientes(data.items);
+      setTotalCount(data.totalCount);
+      setLoading(false)
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
   }
+
+  const onSearch = (value: string) => {
+    setSearchValue(value);
+    setPageNumber(0);
+  };
+
+  const onPageChange = (newPage: number, newRowsPerPage: number) => {
+    setPageNumber(newPage);
+    setPageSize(newRowsPerPage);
+  };
     
-  const handleClienteEvent = (cliente?: ResponseCliente) => {
+  const handleClienteEvent = (cliente?: ItemCliente) => {
     setSelectedCliente(cliente ?? null);
     setOpenDialog(true);
   };
@@ -75,7 +95,16 @@ const ClientesHome = () => {
 
   return(
     <div className="margem">
-        <ClientesTable clientes={clientes} loading={loading} openFormEvent={handleClienteEvent} handleAtivarInativarEvent={handleAtivarInativarEvent} />
+        <ClientesTable 
+        clientes={clientes} 
+        loading={loading} 
+        totalCount={totalCount}
+        pageNumber={pageNumber}
+        pageSize={pageSize}
+        onPageChange={onPageChange}
+        onSearchChange={onSearch}
+        openFormEvent={handleClienteEvent} 
+        handleAtivarInativarEvent={handleAtivarInativarEvent} />
             
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth maxWidth="lg">
           <DialogContent>
